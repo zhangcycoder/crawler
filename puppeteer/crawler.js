@@ -28,8 +28,6 @@ const pt = require('puppeteer');
         })
         return data
     });
-    console.log(result, 'result')
-
     await brower.close();
     process.send(result);
     setTimeout(() => {

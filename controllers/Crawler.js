@@ -1,11 +1,11 @@
 const { startProcess, qiniuUpload } = require('../libs/utils'),
-    config = require('../config/config')
+    config = require('../config/config'),
+    { addSliderData } = require('../sevices/slider');
 class Crawler {
     crawlSliderData() {
         startProcess({
             path: '../crawlers/slider.js',
             async message(data) {
-                console.log(1)
                 data.map(async (item) => {
                     if (item.imgUrl && !item.key) {
                         const qiniu = config.qiniu;
@@ -20,12 +20,17 @@ class Crawler {
                             if (imgData.key) {
                                 item.imgKey = imgData.key
                             }
+                            const result = await addSliderData(item)
+                            if (result) {
+                                console.log('data Create Ok')
+                            } else {
+                                console.log('data  error')
+                            }
                         } catch (e) {
                             console.log(e)
                         }
                     }
                 })
-                console.log(data, 'data')
             },
             async exit(data) {
                 console.log(data)
