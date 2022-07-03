@@ -75,6 +75,47 @@ class Crawler {
         })
 
     }
+    crawlRecomCourse() {
+        startProcess({
+            path: '../crawlers/recomCourse.js',
+            async message(data) {
+                console.log(data, 'data')
+                const qiniu = config.qiniu;
+                try {
+                    data.map(async (item) => {
+                        if (item.posterUrl && !item.posterKey) {
+                            const posterData = await qiniuUpload({
+                                url: item.posterUrl,
+                                bucket: qiniu.buket.tximg.buket_name,
+                                ext: '.jpg'
+                            })
+                            if (posterData.key) {
+                                item.posterKey = posterData.key
+                            }
+                        }
+                        if (item.teacherImg && !item.teacherImgKey) {
+                            const teacherImgData = await qiniuUpload({
+                                url: item.teacherImg,
+                                bucket: qiniu.buket.tximg.buket_name,
+                                ext: '.jpg'
+                            })
+                            if (teacherImgData.key) {
+                                item.teacherImgKey = teacherImgData.key
+                            }
+                        }
+                    })
+                } catch (e) {
+                    console.log('catch', e)
+                }
+            },
+            async exit(data) {
+                console.log(data)
+            },
+            async error(data) {
+                console.log(data)
+            },
+        })
+    }
 }
 
 module.exports = new Crawler();
