@@ -7,14 +7,12 @@ class Crawler {
             path: '../crawlers/slider.js',
             async message(data) {
                 data.map(async (item) => {
-                    if (item.imgUrl && !item.key) {
+                    if (item.imgUrl && !item.imgKey) {
                         const qiniu = config.qiniu;
                         try {
                             const imgData = await qiniuUpload({
                                 url: item.imgUrl,
                                 bucket: qiniu.buket.tximg.buket_name,
-                                ak: qiniu.keys.ak,
-                                sk: qiniu.keys.sk,
                                 ext: '.jpg'
                             })
                             if (imgData.key) {
@@ -39,6 +37,36 @@ class Crawler {
                 console.log(data)
             },
         })
+    }
+    crawlAgencyInfo() {
+        startProcess({
+            path: "../crawlers/agencyInfo.js",
+            async message(data) {
+                if (data.logoUrl && !data.key) {
+                    const qiniu = config.qiniu;
+                    try {
+                        const logoData = await qiniuUpload({
+                            url: data.logoUrl,
+                            bucket: qiniu.buket.tximg.buket_name,
+                            ext: '.jpg'
+                        })
+                        if (logoData.key) {
+                            data.logoKey = logoData.key;
+                        }
+                    } catch (error) {
+                        console.log('crawlAgencyInfo upload error', error)
+                    }
+                }
+
+            },
+            async exit(data) {
+                console.log(data)
+            },
+            async error(data) {
+                console.log(data)
+            },
+        })
+
     }
 }
 

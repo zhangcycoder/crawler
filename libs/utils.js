@@ -1,8 +1,9 @@
 const nanoId = require('nanoid')
 const cp = require('child_process'),
     { resolve } = require('path'),
+    config = require('../config/config'),
     Qiniu = require('qiniu');
-
+const { ak, sk } = config.qiniu.keys;
 module.exports = {
     startProcess(options) {
         const script = resolve(__dirname, options.path),
@@ -26,7 +27,7 @@ module.exports = {
         })
     },
     qiniuUpload(options) {
-        const mac = new Qiniu.auth.digest.Mac(options.ak, options.sk),
+        const mac = new Qiniu.auth.digest.Mac(ak, sk),
             conf = new Qiniu.conf.Config(),
             client = new Qiniu.rs.BucketManager(mac, conf),
             key = nanoId.nanoid() + options.ext;

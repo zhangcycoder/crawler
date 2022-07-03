@@ -9,6 +9,13 @@ module.exports = {
                 buket_name: 'zcy-txclass-img',
                 domain: 'http://reama1rpb.hd-bkt.clouddn.com/'
             }
+        },
+        crawler: {
+            url: {
+                main: "https://msiwei.ke.qq.com/#tab=0&category=-1",
+                course: "https://msiwei.ke.qq.com/#tab=1&category=-1",
+                teacher: "https://msiwei.ke.qq.com/#tab=2&category=-1",
+            }
         }
     },
 }

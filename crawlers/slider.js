@@ -1,7 +1,8 @@
-const crawler = require('../libs/crawler');
-
+const crawler = require('../libs/crawler'),
+    config = require('../config/config');
+const url = config.qiniu.crawler.url.main;
 crawler({
-    url: 'https://msiwei.ke.qq.com/#tab=0&category=-1',
+    url: url,
     callback() {
         const $ = window.$,
             $item = $('.agency-big-banner-ul .agency-big-banner-li');
