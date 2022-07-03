@@ -1,7 +1,8 @@
 const { startProcess, qiniuUpload } = require('../libs/utils'),
-    config = require('../config/config'),
+    { qiniu } = require('../config/config'),
     { addAgencyInfo } = require('../sevices/AgencyInfo'),
     { addRecomCourse } = require('../sevices/recomCourse'),
+    { addCollection } = require('../sevices/collection'),
     { addSliderData } = require('../sevices/slider');
 class Crawler {
     crawlSliderData() {
@@ -10,7 +11,6 @@ class Crawler {
             async message(data) {
                 data.map(async (item) => {
                     if (item.imgUrl && !item.imgKey) {
-                        const qiniu = config.qiniu;
                         try {
                             const imgData = await qiniuUpload({
                                 url: item.imgUrl,
@@ -45,7 +45,6 @@ class Crawler {
             path: "../crawlers/agencyInfo.js",
             async message(data) {
                 if (data.logoUrl && !data.key) {
-                    const qiniu = config.qiniu;
                     try {
                         const logoData = await qiniuUpload({
                             url: data.logoUrl,
@@ -80,8 +79,6 @@ class Crawler {
         startProcess({
             path: '../crawlers/recomCourse.js',
             async message(data) {
-                console.log(data, 'data')
-                const qiniu = config.qiniu;
                 try {
                     data.map(async (item) => {
                         if (item.posterUrl && !item.posterKey) {
@@ -114,6 +111,41 @@ class Crawler {
                 } catch (e) {
                     console.log('catchError', e)
                 }
+            },
+            async exit(data) {
+                console.log(data)
+            },
+            async error(data) {
+                console.log(data)
+            },
+        })
+    }
+    crawlCollection() {
+        startProcess({
+            path: "../crawlers/collection.js",
+            async message(data) {
+                data.map(async (item, index) => {
+                    try {
+                        if (item.posterUrl && !item.posterKey) {
+                            const posterData = await qiniuUpload({
+                                url: item.posterUrl,
+                                bucket: qiniu.buket.tximg.buket_name,
+                                ext: '.jpg'
+                            })
+                            if (posterData.key) {
+                                item.posterKey = posterData.key
+                            }
+                        }
+                        const result = await addCollection(item)
+                        if (result) {
+                            console.log('addRecomCourse data Create  Ok')
+                        } else {
+                            console.log('addRecomCourse error')
+                        }
+                    } catch (error) {
+                        console.log('catchError', error)
+                    }
+                })
             },
             async exit(data) {
                 console.log(data)
