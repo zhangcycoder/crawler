@@ -6,6 +6,7 @@ const { startProcess, qiniuUpload } = require('../libs/utils'),
     { addTeacherata } = require('../sevices/teacher'),
     { addStudentData } = require('../sevices/student'),
     { addSourceTabData } = require('../sevices/sourceTab'),
+    { addCourseData } = require('../sevices/course'),
     { addSliderData } = require('../sevices/slider');
 class Crawler {
     crawlSliderData() {
@@ -241,6 +242,43 @@ class Crawler {
                             console.log('addSourceTabData data Create  Ok')
                         } else {
                             console.log('addSourceTabData error')
+                        }
+                    })
+                } catch (error) {
+                    console.log('catchError', error)
+                }
+            },
+            async exit(data) {
+                console.log(data)
+            },
+            async error(data) {
+                console.log(data)
+            },
+        })
+    }
+
+    crawlCourseData() {
+        startProcess({
+            path: "../crawlers/course.js",
+            async message(data) {
+                try {
+                    console.log(data, 'data')
+                    data.map(async (item, index) => {
+                        if (item.posterUrl && !item.posterKey) {
+                            const posterData = await qiniuUpload({
+                                url: item.posterUrl,
+                                bucket: qiniu.buket.tximg.buket_name,
+                                ext: '.jpg'
+                            })
+                            if (posterData.key) {
+                                item.posterKey = posterData.key
+                            }
+                        }
+                        const result = await addCourseData(item)
+                        if (result) {
+                            console.log('addCourseData data Create  Ok')
+                        } else {
+                            console.log('addCourseData error')
                         }
                     })
                 } catch (error) {

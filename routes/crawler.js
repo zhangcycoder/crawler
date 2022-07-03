@@ -9,4 +9,5 @@ router.get('/crawl_collection', crawlerController.crawlCollection)
 router.get('/teacher', crawlerController.crawlTeacher)
 router.get('/student', crawlerController.crawlStudent)
 router.get('/courseTab', crawlerController.crawlCourseTab)
+router.get('/courseData', crawlerController.crawlCourseData)
 module.exports = router
