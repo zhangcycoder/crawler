@@ -1,6 +1,7 @@
 const { startProcess, qiniuUpload } = require('../libs/utils'),
     config = require('../config/config'),
     { addAgencyInfo } = require('../sevices/AgencyInfo'),
+    { addRecomCourse } = require('../sevices/recomCourse'),
     { addSliderData } = require('../sevices/slider');
 class Crawler {
     crawlSliderData() {
@@ -75,7 +76,7 @@ class Crawler {
         })
 
     }
-    crawlRecomCourse() {
+    async crawlRecomCourse() {
         startProcess({
             path: '../crawlers/recomCourse.js',
             async message(data) {
@@ -103,9 +104,15 @@ class Crawler {
                                 item.teacherImgKey = teacherImgData.key
                             }
                         }
+                        const result = await addRecomCourse(item)
+                        if (result) {
+                            console.log('addRecomCourse data Create  Ok')
+                        } else {
+                            console.log('addRecomCourse error')
+                        }
                     })
                 } catch (e) {
-                    console.log('catch', e)
+                    console.log('catchError', e)
                 }
             },
             async exit(data) {
