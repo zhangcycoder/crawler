@@ -8,4 +8,5 @@ router.get('/crawl_recom_course', crawlerController.crawlRecomCourse)
 router.get('/crawl_collection', crawlerController.crawlCollection)
 router.get('/teacher', crawlerController.crawlTeacher)
 router.get('/student', crawlerController.crawlStudent)
+router.get('/courseTab', crawlerController.crawlCourseTab)
 module.exports = router

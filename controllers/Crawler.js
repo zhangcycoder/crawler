@@ -5,6 +5,7 @@ const { startProcess, qiniuUpload } = require('../libs/utils'),
     { addCollection } = require('../sevices/collection'),
     { addTeacherata } = require('../sevices/teacher'),
     { addStudentData } = require('../sevices/student'),
+    { addSourceTabData } = require('../sevices/sourceTab'),
     { addSliderData } = require('../sevices/slider');
 class Crawler {
     crawlSliderData() {
@@ -220,6 +221,31 @@ class Crawler {
                         console.log('catchError', error)
                     }
                 })
+            },
+            async exit(data) {
+                console.log(data)
+            },
+            async error(data) {
+                console.log(data)
+            },
+        })
+    }
+    crawlCourseTab() {
+        startProcess({
+            path: "../crawlers/courseTab.js",
+            async message(data) {
+                try {
+                    data.map(async (item, index) => {
+                        const result = await addSourceTabData(item)
+                        if (result) {
+                            console.log('addSourceTabData data Create  Ok')
+                        } else {
+                            console.log('addSourceTabData error')
+                        }
+                    })
+                } catch (error) {
+                    console.log('catchError', error)
+                }
             },
             async exit(data) {
                 console.log(data)
