@@ -3,6 +3,7 @@ const { startProcess, qiniuUpload } = require('../libs/utils'),
     { addAgencyInfo } = require('../sevices/AgencyInfo'),
     { addRecomCourse } = require('../sevices/recomCourse'),
     { addCollection } = require('../sevices/collection'),
+    { addTeacherata } = require('../sevices/teacher'),
     { addSliderData } = require('../sevices/slider');
 class Crawler {
     crawlSliderData() {
@@ -154,6 +155,43 @@ class Crawler {
                 console.log(data)
             },
         })
+    }
+
+    crawlTeacher() {
+        startProcess({
+            path: "../crawlers/teacher.js",
+            async message(data) {
+                data.map(async (item, index) => {
+                    try {
+                        if (item.teacherImg && !item.imgkey) {
+                            const teacherImgData = await qiniuUpload({
+                                url: item.teacherImg,
+                                bucket: qiniu.buket.tximg.buket_name,
+                                ext: '.jpg'
+                            })
+                            if (teacherImgData.key) {
+                                item.imgkey = teacherImgData.key
+                            }
+                        }
+                        const result = await addTeacherata(item)
+                        if (result) {
+                            console.log('addTeacherata data Create  Ok')
+                        } else {
+                            console.log('addTeacherata error')
+                        }
+                    } catch (error) {
+                        console.log('catchError', error)
+                    }
+                })
+            },
+            async exit(data) {
+                console.log(data)
+            },
+            async error(data) {
+                console.log(data)
+            },
+        })
+
     }
 }
 
